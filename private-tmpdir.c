@@ -257,12 +257,6 @@ static int _tmpdir_init_opts(spank_t sp, int ac, char **av)
 		return 0;
 	init_opts = 1;
 
-	// Init
-	memset(bases, '\0', sizeof(bases));
-	memset(base_paths, '\0', sizeof(base_paths));
-	memset(bind_dirs, '\0', sizeof(bind_dirs));
-	memset(bind_paths, '\0', sizeof(bind_paths));
-
 	// for each argument in plugstack.conf
 	for (i = 0; i < ac; i++) {
 		if (strncmp("base=", av[i], 5) == 0) {
@@ -298,15 +292,15 @@ static int _tmpdir_init_opts(spank_t sp, int ac, char **av)
 				     MAX_BIND_DIRS);
 				return -1;
 			}
+			if (!strlen(optarg)) {
+				slurm_error
+				    ("private-tmpdir: no argument given to mount= option");
+				return -1;
+			}
 			if (optarg[0] != '/') {
 				slurm_error
 				    ("private-tmpdir: mount= option must start with a '/': (%s)",
 				     optarg);
-				return -1;
-			}
-			if (!strlen(optarg)) {
-				slurm_error
-				    ("private-tmpdir: no argument given to mount= option");
 				return -1;
 			}
 			bases[bind_count] = base;
